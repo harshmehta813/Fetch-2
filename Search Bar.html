@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News App</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+    <div id="navbar">
+        <ul id='ul'>
+            <li><span class="material-icons-outlined">&#Xea2f</span>
+                <button name='sports'>Sports</button>
+            </li>
+            <li ><span class="material-icons-outlined">&#Xe02c</span>
+                <button name='entertainment'>Entertainment</button>
+            </li>
+            <li ><span class="material-icons-outlined">&#Xea0b</span>
+                <button name='technology'>Technology</button>
+            </li>
+            <li><input type="text" placeholder="Type here to search" name="search" id="search">
+                <input type="button" value="Search" id="btn">
+            </li>
+        </ul>
+    </div>
+    <div id="main"></div>
+    <div id="pagination"></div>
+
+    <script>
+
+let current=1
+   let limit=5
+   let category='india'
+    function getNews(target,current)
+    {
+    return fetch(`http://newsapi.org/v2/everything?q=${target}&page=${current}&pageSize=${limit}&apiKey=bf52ba0dec1e4d388d547b85d3b94550`).then((response) => {
+        return response.json()
+        
+    }).catch(function (error) {
+        console.log(error)
+    })
+}
+
+async function fetchNews(target,current)
+{
+
+try{
+    const {
+        articles
+            
+        
+    }=await getNews(target,current)
+    //  console.log(title)
+   visualize(articles)
+   createPagination(current)
+}
+catch(er)
+{
+console.log(er)
+}
+}
+
+
+function visualize(data)
+{
+console.log('iam working')
+
+console.log(data)
+let main=document.getElementById('main')
+main.innerHTML=null
+
+for(let headline of data)
+{
+   
+    let card=createCard(headline)
+    
+    main.append(card)
+   
+}
+}
+function createCard(headline)
+{
+let div=document.createElement('div')
+div.className='container'
+let img=document.createElement('img')
+let h2=document.createElement('h2')
+let p=document.createElement('p')
+//let div=document.createElement('div')
+img.src=headline.urlToImage
+h2.innerHTML=headline.title
+p.innerHTML=`${headline.description} ${headline.content}`
+div.append(img,h2,p)
+return div
+
+}
+
+function handleCategory(e)
+{
+console.log(e)
+    let target=event.target.name;
+    console.log(target)
+    console.log('target')
+    
+    if(target=='sports'||target=='entertainment'||target=='technology')
+    {
+    category=target
+    current=1
+    fetchNews(target,current)
+    return
+    }
+    
+}
+
+function createPagination(current)
+{
+    let container=document.getElementById('pagination')
+    container.innerHTML=null
+    let prev=document.createElement('button')
+    let next=document.createElement('button')
+    let curr=document.createElement('button')
+    prev.name=current-1;
+    prev.textContent="previous"
+    next.name=current+1;
+    next.textContent="next"
+    curr.name=current;
+    curr.textContent=current
+    if(prev.name==0)
+    prev.disabled='true'
+    container.append(prev,curr,next)
+}
+function handlePage(e)
+{
+    console.log(e.target.name)
+    current=parseInt(e.target.name);
+    fetchNews(category,current)
+  
+
+}
+function handleSearch()
+{
+    let value=document.getElementById('search')
+    if(!value.value)
+    return false
+    category=value.value;
+    current=1
+    fetchNews(category,current)
+    value.value=""
+}
+window.addEventListener('load',function(){
+    fetchNews('india',current)
+    let btn=document.querySelector('#ul')
+    btn.addEventListener('click',handleCategory)
+    let submit=document.getElementById('btn')
+    submit.addEventListener('click',handleSearch)
+    let pageBtn=document.getElementById('pagination')
+    pageBtn.addEventListener('click',handlePage)
+})
+
+
+    </script>
+</body>
+</html>
