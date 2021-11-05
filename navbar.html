@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News App</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+    <div id="navbar">
+        <ul id='ul'>
+            <li><span class="material-icons-outlined">&#Xea2f</span>
+                <button name='sports'>Sports</button>
+            </li>
+            <li ><span class="material-icons-outlined">&#Xe02c</span>
+                <button name='entertainment'>Entertainment</button>
+            </li>
+            <li ><span class="material-icons-outlined">&#Xea0b</span>
+                <button name='technology'>Technology</button>
+            </li>
+        </ul>
+    </div>
+    
+<div id="main"></div>
+<script>
+   
+   
+    function getNews(target)
+    {
+    return fetch(`http://newsapi.org/v2/everything?q=${target}&apiKey=bf52ba0dec1e4d388d547b85d3b94550`).then((response) => {
+        return response.json()
+        
+    }).catch(function (error) {
+        console.log(error)
+    })
+}
+
+async function fetchNews(target)
+{
+
+try{
+    const {
+        articles
+            
+        
+    }=await getNews(target)
+   visualize(articles)
+}
+catch(er)
+{
+console.log(er)
+}
+}
+
+
+function visualize(data)
+{console.log(data)
+let main=document.getElementById('main')
+main.innerHTML=null
+
+for(let headline of data) {
+    let card=createCard(headline)
+    main.append(card)
+}
+}
+function createCard(headline) {
+    let div=document.createElement('div')
+div.className='container'
+let img=document.createElement('img')
+let h2=document.createElement('h2')
+let p=document.createElement('p')
+img.src=headline.urlToImage
+h2.innerHTML=headline.title
+p.innerHTML=`${headline.description} ${headline.content}`
+div.append(img,h2,p)
+return div
+}
+
+function handleSearch(e){
+    let target=event.target.name;
+    console.log(target)
+    console.log('target')
+    if(target == 'sports' || target == 'entertainment' || target == 'technology'){
+        category = target
+    fetchNews(target)
+    return
+    }
+    
+}
+window.addEventListener('load',function(){
+    fetchNews('india')
+    let btn=document.querySelector('#ul')
+    btn.addEventListener('click',handleSearch)
+})
+
+</script>
+</body>
+</html>
