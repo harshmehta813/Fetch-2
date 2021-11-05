@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News App</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+    <div id="main"></div>
+    <script>
+    config = {
+        method: "GET",
+        headers: {
+            'X-Api-Key': 'bf52ba0dec1e4d388d547b85d3b94550'
+        }
+    }
+    let country = 'india'
+    let news = 'top-headlines'
+    function getNews() {
+        return fetch(`http://newsapi.org/v2/${news}?q=${country}`, config).then((response) => {
+            return response.json()
+        }).catch(function (error) {
+            console.log(error)
+        })
+    }
+    
+    async function fetchNews() {
+    
+        try{
+            const {
+                articles
+            }=await getNews()
+            //  console.log(title)
+           visualize(articles)
+        }
+        catch(er)
+        {
+        console.log(er)
+        }
+    }
+    
+    
+    function visualize(data)
+    {
+        console.log('iam working')
+        console.log(data)
+        let main=document.getElementById('main')
+        let count=0
+        for(let headline of data)
+        {
+            if(count>9)
+            return
+            let card=createCard(headline)
+            
+            main.append(card)
+            count++
+        }
+    }
+    function createCard(headline)
+    {
+        let div=document.createElement('div')
+        div.className='container'
+        let img=document.createElement('img')
+        let h2=document.createElement('h2')
+        let p=document.createElement('p')
+        img.src=headline.urlToImage
+        h2.innerHTML=headline.title
+        p.innerHTML=`${headline.description} ${headline.content}`
+        div.append(img,h2,p)
+        return div
+    
+    }
+    fetchNews()
+        </script>
+</body>
+</html>
